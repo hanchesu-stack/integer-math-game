@@ -12,20 +12,20 @@ body{
   display:flex;justify-content:center;align-items:center;min-height:100vh;
   overflow:hidden;user-select:none;-webkit-user-select:none;
 }
-#wrap{position:relative;width:100%;max-width:480px;height:100vh;max-height:800px}
+#wrap{position:relative;width:100%;max-width:1200px;aspect-ratio:16/9;max-height:100vh}
 canvas{display:block;width:100%;height:100%;background:#000}
 #hud{
   position:absolute;top:0;left:0;right:0;z-index:2;
   display:flex;justify-content:space-between;padding:8px 12px;
-  font-size:12px;color:#fcd000;text-shadow:2px 2px 0 #000;
+  font-size:14px;color:#fcd000;text-shadow:2px 2px 0 #000;
   pointer-events:none;
 }
 #hud span{margin:0 4px}
 #question-bar{
   position:absolute;top:36px;left:0;right:0;z-index:2;
-  text-align:center;font-size:14px;color:#f8f8f8;
+  text-align:center;font-size:24px;color:#f8f8f8;
   text-shadow:2px 2px 0 #000;pointer-events:none;
-  padding:4px;background:rgba(0,0,0,0.6);
+  padding:8px;background:rgba(0,0,0,0.6);
 }
 #msg-overlay{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;
@@ -165,8 +165,8 @@ function resize(){
   cv.style.width=W+'px';cv.style.height=H+'px';
   ctx.setTransform(1,0,0,1,0,0);
   ctx.scale(cv.devicePixelRatio||1,cv.devicePixelRatio||1);
-  // Use logical coords for game: 480x800 base
-  scale=Math.min(W/480,H/800);
+  // Use logical coords for game: 640x360 base (16:9)
+  scale=Math.min(W/640,H/360);
 }
 resize();window.addEventListener('resize',resize);
 
@@ -179,15 +179,15 @@ var GS={
 };
 
 // === Entities ===
-var player={x:240,y:680,w:20,h:28,speed:5,inv:0};
-var enemies=[],bullets=[],stars=[],particles=[];
+var player={x:320,y:290,w:20,h:28,speed:5,inv:0};
+var enemies=[],bullets=[],stars=[],particles=[],treasures=[];
 
-function resetPlayer(){player.x=240;player.y=680;player.inv=0;bullets=[];}
-function getFirepower(){return Math.min(GS.lv+1,5)}
+function resetPlayer(){player.x=320;player.y=290;player.inv=0;bullets=[];}
+function getFirepower(){return GS.fire;}
 
 // === Stars ===
 function initStars(){
-  stars=[];for(var i=0;i<80;i++)stars.push({x:Math.random()*480,y:Math.random()*800,s:1+Math.random()*2});
+  stars=[];for(var i=0;i<80;i++)stars.push({x:Math.random()*640,y:Math.random()*360,s:1+Math.random()*2});
 }
 
 // === Answer generation ===
@@ -215,7 +215,7 @@ function genAnswers(correct){
 function spawnEnemies(avals){
   enemies=[];
   for(var i=0;i<avals.length;i++){
-    enemies.push({x:60+i*120,y:-40-i*30,vx:0,vy:0.8+GS.lv*0.3,val:avals[i],w:40,h:30,alive:true,hit:false});
+    enemies.push({x:72+i*165,y:-40-i*30,vx:0,vy:0.8+GS.lv*0.3,val:avals[i],w:40,h:30,alive:true,hit:false});
   }
 }
 
@@ -236,7 +236,7 @@ function drawEnemy(x,y,w,h,val,highlight){
   ctx.beginPath();ctx.moveTo(x,y-h/2);ctx.lineTo(x+w/2,y);ctx.lineTo(x,y+h/2);ctx.lineTo(x-w/2,y);ctx.closePath();
   ctx.fill();ctx.stroke();
   // Number
-  ctx.fillStyle='#f8f8f8';ctx.font='bold 14px "PressStart","Courier New",monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='#f8f8f8';ctx.font='bold 20px "PressStart","Courier New",monospace';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(val,x,y+1);
 }
 function drawBullet(x,y){ctx.fillStyle='#fcd000';ctx.fillRect(x-2,y-6,4,12);ctx.fillStyle='#fff';ctx.fillRect(x-1,y-8,2,6)}
@@ -246,6 +246,14 @@ function draw(){
   ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
   // Stars
   for(var i=0;i<stars.length;i++){var st=stars[i];drawStar(st.x,st.y,st.s)}
+  // Treasures
+  for(var i=0;i<treasures.length;i++){
+    var tr=treasures[i];var t=Date.now()/200;
+    ctx.fillStyle='#00ff88';ctx.strokeStyle='#fff';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(tr.x,tr.y,10+Math.sin(t+i)*2,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font='bold 12px "PressStart","Courier New",monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('P',tr.x,tr.y+1);
+  }
   // Enemies
   for(var i=0;i<enemies.length;i++){
     var e=enemies[i];if(!e.alive)continue;
@@ -261,7 +269,7 @@ function draw(){
   }
   // Phase message
   if(GS.pmsg){
-    ctx.fillStyle='#fcd000';ctx.font='18px "PressStart","Courier New",monospace';ctx.textAlign='center';
+    ctx.fillStyle='#fcd000';ctx.font='22px "PressStart","Courier New",monospace';ctx.textAlign='center';
     ctx.fillText(GS.pmsg,W/2,H/2-40);
   }
 }
@@ -269,15 +277,31 @@ function draw(){
 // === Update ===
 function update(){
   // Stars
-  for(var i=0;i<stars.length;i++){stars[i].y+=stars[i].s;if(stars[i].y>H)stars[i].y=-4}
+  for(var i=0;i<stars.length;i++){stars[i].y+=stars[i].s;if(stars[i].y>360)stars[i].y=-4}
   // Player invincibility
   if(player.inv>0)player.inv--;
+  // Treasure spawn (random chance per frame)
+  if(GS.active&&Math.random()<0.002){
+    treasures.push({x:40+Math.random()*560,y:-20,vy:1.5});
+  }
+  // Treasure movement & collision
+  for(var i=treasures.length-1;i>=0;i--){
+    treasures[i].y+=treasures[i].vy;
+    if(treasures[i].y>380){treasures.splice(i,1);continue}
+    // Collision with player
+    var tr=treasures[i];
+    if(Math.abs(tr.x-player.x)<player.w/2+12&&Math.abs(tr.y-player.y)<player.h/2+12){
+      GS.fire=Math.min(GS.fire+1,8);
+      document.getElementById('hud-fire').textContent='Lv'+GS.fire;
+      treasures.splice(i,1);
+    }
+  }
   // Enemies
   for(var i=0;i<enemies.length;i++){
     var e=enemies[i];if(!e.alive)continue;
     e.y+=e.vy;e.x+=e.vx;
     if(e.hit){e.alive=false;continue}
-    if(e.y>H+40){e.alive=false}
+    if(e.y>400){e.alive=false}
   }
   // Bullets
   for(var i=bullets.length-1;i>=0;i--){
@@ -312,6 +336,9 @@ function hitEnemy(idx,e){
     particles.push({x:e.x,y:e.y,life:1});
     GS.lvs[GS.lv-1]+=5;GS.total+=5;
     document.getElementById('hud-score').textContent=GS.total;
+    // Real-time leaderboard submission
+    var row={class_name:GS.cls,seat_number:GS.seat,student_name:GS.name,email:GS.email,score:GS.total,level1_score:GS.lvs[0],level2_score:GS.lvs[1],level3_score:GS.lvs[2],level4_score:GS.lvs[3],game_time_seconds:GS.sec};
+    sbInsert(row);
     GS.active=false;GS.pmsg='✅ 命中！';GS.ptimer=45;
   }else{
     // Wrong
@@ -329,7 +356,6 @@ function onPhaseEnd(){
   if(GS.qn>=5){
     GS.lv++;GS.qn=1;
     if(GS.lv>4){endGame();return}
-    GS.fire=getFirepower();
     document.getElementById('hud-fire').textContent='Lv'+GS.fire;
     startLevel();
   }else{
@@ -340,7 +366,7 @@ function onPhaseEnd(){
 
 // === Game flow ===
 function startLevel(){
-  GS.active=false;GS.pmsg='第 '+GS.lv+' 關！火力 Lv'+GS.fire;GS.ptimer=90;
+  GS.active=false;GS.pmsg='第 '+GS.lv+' 關！';GS.ptimer=90;
   GS.phaseNext='level';
   document.getElementById('hud-fire').textContent='Lv'+GS.fire;
   document.getElementById('hud-q').textContent=GS.qn+'/5';
@@ -364,7 +390,10 @@ function fireBullets(){
   else if(f===2)offsets=[-6,6];
   else if(f===3)offsets=[-10,0,10];
   else if(f===4)offsets=[-14,-6,6,14];
-  else offsets=[-16,-8,0,8,16];
+  else if(f===5)offsets=[-16,-8,0,8,16];
+  else if(f===6)offsets=[-20,-10,0,10,20];
+  else if(f===7)offsets=[-22,-12,-4,4,12,22];
+  else offsets=[-24,-16,-8,0,8,16,24];
   for(var i=0;i<offsets.length;i++)bullets.push({x:x+offsets[i],y:player.y-20});
 }
 
@@ -384,8 +413,8 @@ function handleInput(){
   if(keys['ArrowRight']||keys['d'])player.x+=player.speed;
   if(keys['ArrowUp']||keys['w'])player.y-=player.speed;
   if(keys['ArrowDown']||keys['s'])player.y+=player.speed;
-  player.x=Math.max(20,Math.min(460,player.x));
-  player.y=Math.max(500,Math.min(760,player.y));
+  player.x=Math.max(28,Math.min(612,player.x));
+  player.y=Math.max(200,Math.min(340,player.y));
 }
 // Mobile
 var mtouches={};
@@ -418,7 +447,7 @@ function startGame(){
   if(!a){alert('請輸入班級');return}if(!b||b<1){alert('請輸入正確的座號');return}
   if(!c){alert('請輸入姓名');return}if(!d){alert('請輸入 E-mail');return}
   GS.cls=a;GS.seat=b;GS.name=c;GS.email=d;
-  GS.lv=1;GS.qn=1;GS.lvs=[0,0,0,0];GS.total=0;GS.sec=0;GS.fire=1;GS.phaseNext='';
+  GS.lv=1;GS.qn=1;GS.lvs=[0,0,0,0];GS.total=0;GS.sec=0;GS.fire=1;GS.phaseNext='';treasures=[];
   document.getElementById('hud-score').textContent='0';
   document.getElementById('hud-time').textContent='00:00';
   document.getElementById('hud-fire').textContent='Lv1';
