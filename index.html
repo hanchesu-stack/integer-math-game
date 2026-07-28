@@ -12,7 +12,7 @@ body{
   display:flex;justify-content:center;align-items:center;min-height:100vh;
   overflow:hidden;user-select:none;-webkit-user-select:none;
 }
-#wrap{position:relative;width:100%;max-width:1200px;aspect-ratio:16/9;max-height:100vh}
+#wrap{position:relative;width:100%;max-width:480px;height:100vh;max-height:800px}
 canvas{display:block;width:100%;height:100%;background:#000}
 #hud{
   position:absolute;top:0;left:0;right:0;z-index:2;
@@ -165,8 +165,8 @@ function resize(){
   cv.style.width=W+'px';cv.style.height=H+'px';
   ctx.setTransform(1,0,0,1,0,0);
   ctx.scale(cv.devicePixelRatio||1,cv.devicePixelRatio||1);
-  // Use logical coords for game: 640x360 base (16:9)
-  scale=Math.min(W/640,H/360);
+  // Use logical coords for game: 480x800 base
+  scale=Math.min(W/480,H/800);
 }
 resize();window.addEventListener('resize',resize);
 
@@ -179,15 +179,15 @@ var GS={
 };
 
 // === Entities ===
-var player={x:320,y:290,w:20,h:28,speed:5,inv:0};
+var player={x:240,y:700,w:20,h:28,speed:5,inv:0};
 var enemies=[],bullets=[],stars=[],particles=[],treasures=[];
 
-function resetPlayer(){player.x=320;player.y=290;player.inv=0;bullets=[];}
+function resetPlayer(){player.x=240;player.y=700;player.inv=0;bullets=[];}
 function getFirepower(){return GS.fire;}
 
 // === Stars ===
 function initStars(){
-  stars=[];for(var i=0;i<80;i++)stars.push({x:Math.random()*640,y:Math.random()*360,s:1+Math.random()*2});
+  stars=[];for(var i=0;i<80;i++)stars.push({x:Math.random()*480,y:Math.random()*800,s:1+Math.random()*2});
 }
 
 // === Answer generation ===
@@ -215,7 +215,7 @@ function genAnswers(correct){
 function spawnEnemies(avals){
   enemies=[];
   for(var i=0;i<avals.length;i++){
-    enemies.push({x:72+i*165,y:-40-i*30,vx:0,vy:0.8+GS.lv*0.3,val:avals[i],w:40,h:30,alive:true,hit:false});
+    enemies.push({x:60+i*120,y:-40-i*30,vx:0,vy:0.8+GS.lv*0.3,val:avals[i],w:50,h:36,alive:true,hit:false});
   }
 }
 
@@ -236,7 +236,7 @@ function drawEnemy(x,y,w,h,val,highlight){
   ctx.beginPath();ctx.moveTo(x,y-h/2);ctx.lineTo(x+w/2,y);ctx.lineTo(x,y+h/2);ctx.lineTo(x-w/2,y);ctx.closePath();
   ctx.fill();ctx.stroke();
   // Number
-  ctx.fillStyle='#f8f8f8';ctx.font='bold 20px "PressStart","Courier New",monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='#f8f8f8';ctx.font='bold 22px "PressStart","Courier New",monospace';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(val,x,y+1);
 }
 function drawBullet(x,y){ctx.fillStyle='#fcd000';ctx.fillRect(x-2,y-6,4,12);ctx.fillStyle='#fff';ctx.fillRect(x-1,y-8,2,6)}
@@ -277,17 +277,17 @@ function draw(){
 // === Update ===
 function update(){
   // Stars
-  for(var i=0;i<stars.length;i++){stars[i].y+=stars[i].s;if(stars[i].y>360)stars[i].y=-4}
+  for(var i=0;i<stars.length;i++){stars[i].y+=stars[i].s;if(stars[i].y>800)stars[i].y=-4}
   // Player invincibility
   if(player.inv>0)player.inv--;
   // Treasure spawn (random chance per frame)
   if(GS.active&&Math.random()<0.002){
-    treasures.push({x:40+Math.random()*560,y:-20,vy:1.5});
+    treasures.push({x:40+Math.random()*400,y:-20,vy:1.5});
   }
   // Treasure movement & collision
   for(var i=treasures.length-1;i>=0;i--){
     treasures[i].y+=treasures[i].vy;
-    if(treasures[i].y>380){treasures.splice(i,1);continue}
+    if(treasures[i].y>840){treasures.splice(i,1);continue}
     // Collision with player
     var tr=treasures[i];
     if(Math.abs(tr.x-player.x)<player.w/2+12&&Math.abs(tr.y-player.y)<player.h/2+12){
@@ -301,7 +301,7 @@ function update(){
     var e=enemies[i];if(!e.alive)continue;
     e.y+=e.vy;e.x+=e.vx;
     if(e.hit){e.alive=false;continue}
-    if(e.y>400){e.alive=false}
+    if(e.y>840){e.alive=false}
   }
   // Bullets
   for(var i=bullets.length-1;i>=0;i--){
@@ -413,8 +413,8 @@ function handleInput(){
   if(keys['ArrowRight']||keys['d'])player.x+=player.speed;
   if(keys['ArrowUp']||keys['w'])player.y-=player.speed;
   if(keys['ArrowDown']||keys['s'])player.y+=player.speed;
-  player.x=Math.max(28,Math.min(612,player.x));
-  player.y=Math.max(200,Math.min(340,player.y));
+  player.x=Math.max(20,Math.min(460,player.x));
+  player.y=Math.max(500,Math.min(760,player.y));
 }
 // Mobile
 var mtouches={};
