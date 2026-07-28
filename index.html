@@ -234,7 +234,7 @@ function sb(table) {
     async insert(row) {
       const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
         method: 'POST',
-        headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify(row)
       });
       if (!r.ok) console.error('insert error', r.status, await r.text());
