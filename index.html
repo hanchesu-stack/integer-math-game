@@ -234,7 +234,7 @@ function sb(table) {
     async insert(row) {
       const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
         method: 'POST',
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify(row)
       });
       if (!r.ok) console.error('insert error', r.status, await r.text());
@@ -245,7 +245,7 @@ function sb(table) {
       let qs = `select=${encodeURIComponent(cols)}`;
       if (opts.order) qs += `&order=${encodeURIComponent(opts.order)}`;
       if (opts.limit) qs += `&limit=${opts.limit}`;
-      const h = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Accept': 'application/json' };
+      const h = { 'apikey': SB_KEY };
       const r = await fetch(`${SB_URL}/rest/v1/${table}?${qs}`, { headers: h });
       if (!r.ok) { console.error('select error', r.status, await r.text()); return []; }
       return await r.json();
