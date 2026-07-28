@@ -409,12 +409,19 @@ function endGame() {
 }
 
 function loadLB() {
-  sb('game_scores').select('student_name,class_name,score,game_time_seconds', { order: 'score.desc,game_time_seconds.asc', limit: 20 }).then(function(data) {
-    var tb = $('leaderboard-body');
-    if (!data || !data.length) {
-      tb.innerHTML = '<tr><td colspan="5">還沒有成績紀錄，快來挑戰！</td></tr>';
-      return;
+  var tb = $('leaderboard-body');
+  tb.innerHTML = '<tr><td colspan="5">載入中...</td></tr>';
+  fetch(SB_URL + '/rest/v1/game_scores?select=student_name,class_name,score,game_time_seconds&order=score.desc,game_time_seconds.asc&limit=20', {
+    headers: { 'apikey': SB_KEY }
+  }).then(function(r) {
+    if (!r.ok) {
+      tb.innerHTML = '<tr><td colspan="5">HTTP ' + r.status + ' - 排行榜無法載入</td></tr>';
+      return r.text().then(function(t) { tb.innerHTML += '<tr><td colspan="5" style="font-size:0.7em;word-break:break-all;">' + esc(t.substring(0,200)) + '</td></tr>'; });
     }
+    return r.json();
+  }).then(function(data) {
+    if (!Array.isArray(data)) { tb.innerHTML = '<tr><td colspan="5">資料格式錯誤</td></tr>'; return; }
+    if (!data.length) { tb.innerHTML = '<tr><td colspan="5">還沒有成績紀錄，快來挑戰！</td></tr>'; return; }
     var h = '';
     for (var i = 0; i < data.length; i++) {
       var r = data[i], mm = Math.floor(r.game_time_seconds / 60), ss = r.game_time_seconds % 60;
@@ -422,8 +429,8 @@ function loadLB() {
       h += '<tr><td>' + rank + '</td><td>' + esc(r.class_name) + '</td><td>' + esc(r.student_name) + '</td><td>' + r.score + '</td><td>' + mm + ':' + String(ss).padStart(2, '0') + '</td></tr>';
     }
     tb.innerHTML = h;
-  }).catch(function() {
-    $('leaderboard-body').innerHTML = '<tr><td colspan="5">排行榜載入失敗</td></tr>';
+  }).catch(function(e) {
+    tb.innerHTML = '<tr><td colspan="5">錯誤: ' + esc(e.message) + '</td></tr>';
   });
 }
 
