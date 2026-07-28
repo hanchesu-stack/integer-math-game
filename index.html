@@ -245,10 +245,9 @@ function sb(table) {
       let qs = `select=${encodeURIComponent(cols)}`;
       if (opts.order) qs += `&order=${encodeURIComponent(opts.order)}`;
       if (opts.limit) qs += `&limit=${opts.limit}`;
-      const r = await fetch(`${SB_URL}/rest/v1/${table}?${qs}`, {
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-      });
-      if (!r.ok) { console.error('select error', r.status); return []; }
+      const h = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Accept': 'application/json' };
+      const r = await fetch(`${SB_URL}/rest/v1/${table}?${qs}`, { headers: h });
+      if (!r.ok) { console.error('select error', r.status, await r.text()); return []; }
       return await r.json();
     }
   };
@@ -374,7 +373,7 @@ function submitAnswer() {
   },1200);
 }
 
-async function endGame() {
+function endGame() {
   if (gs.timer) clearInterval(gs.timer);
   var sec = gs.sec, m = Math.floor(sec/60), s = sec%60;
   var row = {
@@ -385,35 +384,45 @@ async function endGame() {
     level4_score: gs.lvs[3], game_time_seconds: sec
   };
   show('screen-result');
-  $('total-score').textContent=gs.total+' / 100 分';
-  $('total-time').textContent=m+' 分 '+s+' 秒';
-  var lb = ['同號相加','異號相加','同號相減','異號相減'], h='';
-  for (var i=0;i<4;i++) h+='<div class="breakdown-item"><div class="label">'+lb[i]+'</div><div class="value">'+gs.lvs[i]+' / 25</div></div>';
-  $('results-breakdown').innerHTML=h;
+  $('total-score').textContent = gs.total + ' / 100 分';
+  $('total-time').textContent = m + ' 分 ' + s + ' 秒';
+  var lb = ['同號相加','異號相加','同號相減','異號相減'], h = '';
+  for (var i = 0; i < 4; i++) h += '<div class="breakdown-item"><div class="label">' + lb[i] + '</div><div class="value">' + gs.lvs[i] + ' / 25</div></div>';
+  $('results-breakdown').innerHTML = h;
   var sel;
-  if (gs.total>=90) sel='🏆 太厲害了！你就是整數加減法的小偵探！柯南都要佩服你的推理能力！';
-  else if (gs.total>=70) sel='💪 很棒喔！你的推理能力正在進步中，繼續保持，成為真正的少年偵探團成員！';
-  else if (gs.total>=50) sel='🔍 不錯的開始！柯南也是從菜鳥開始的，多練習幾次，真相只有一個——你會越來越強！';
-  else if (gs.total>=30) sel='📚 沒關係！每個名偵探都遇過瓶頸，阿笠博士的發明也常失敗。重點是永不放棄，再挑戰一次吧！';
-  else sel='✨ 別灰心！少年偵探團也是慢慢學習的。看看錯題，把「真相」找出來，下次一定更進步！';
-  $('sel-msg').textContent=sel;
+  if (gs.total >= 90) sel = '🏆 太厲害了！你就是整數加減法的小偵探！柯南都要佩服你的推理能力！';
+  else if (gs.total >= 70) sel = '💪 很棒喔！你的推理能力正在進步中，繼續保持，成為真正的少年偵探團成員！';
+  else if (gs.total >= 50) sel = '🔍 不錯的開始！柯南也是從菜鳥開始的，多練習幾次，真相只有一個——你會越來越強！';
+  else if (gs.total >= 30) sel = '📚 沒關係！每個名偵探都遇過瓶頸，阿笠博士的發明也常失敗。重點是永不放棄，再挑戰一次吧！';
+  else sel = '✨ 別灰心！少年偵探團也是慢慢學習的。看看錯題，把「真相」找出來，下次一定更進步！';
+  $('sel-msg').textContent = sel;
 
-  sb('game_scores').insert(row);
-  sendEmail({ student_name: gs.name, student_email: gs.email, score: gs.total, level1_score: gs.lvs[0], level2_score: gs.lvs[1], level3_score: gs.lvs[2], level4_score: gs.lvs[3], game_time: m+' 分 '+s+' 秒' });
-  loadLB();
+  sb('game_scores').insert(row).then(function(ok) {
+    if (ok) {
+      sendEmail({ student_name: gs.name, student_email: gs.email, score: gs.total, level1_score: gs.lvs[0], level2_score: gs.lvs[1], level3_score: gs.lvs[2], level4_score: gs.lvs[3], game_time: m + ' 分 ' + s + ' 秒' });
+    }
+  }).catch(function() {});
+
+  setTimeout(function() { loadLB(); }, 500);
 }
 
-async function loadLB() {
-  var data = await sb('game_scores').select('student_name,class_name,score,game_time_seconds', { order: 'score.desc,game_time_seconds.asc', limit: 20 });
-  var tb = $('leaderboard-body');
-  if (!data.length) { tb.innerHTML='<tr><td colspan="5">還沒有成績紀錄，快來挑戰！</td></tr>'; return; }
-  var h='';
-  for (var i=0;i<data.length;i++) {
-    var r=data[i], mm=Math.floor(r.game_time_seconds/60), ss=r.game_time_seconds%60;
-    var rank = i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);
-    h+='<tr><td>'+rank+'</td><td>'+esc(r.class_name)+'</td><td>'+esc(r.student_name)+'</td><td>'+r.score+'</td><td>'+mm+':'+String(ss).padStart(2,'0')+'</td></tr>';
-  }
-  tb.innerHTML=h;
+function loadLB() {
+  sb('game_scores').select('student_name,class_name,score,game_time_seconds', { order: 'score.desc,game_time_seconds.asc', limit: 20 }).then(function(data) {
+    var tb = $('leaderboard-body');
+    if (!data || !data.length) {
+      tb.innerHTML = '<tr><td colspan="5">還沒有成績紀錄，快來挑戰！</td></tr>';
+      return;
+    }
+    var h = '';
+    for (var i = 0; i < data.length; i++) {
+      var r = data[i], mm = Math.floor(r.game_time_seconds / 60), ss = r.game_time_seconds % 60;
+      var rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : String(i + 1);
+      h += '<tr><td>' + rank + '</td><td>' + esc(r.class_name) + '</td><td>' + esc(r.student_name) + '</td><td>' + r.score + '</td><td>' + mm + ':' + String(ss).padStart(2, '0') + '</td></tr>';
+    }
+    tb.innerHTML = h;
+  }).catch(function() {
+    $('leaderboard-body').innerHTML = '<tr><td colspan="5">排行榜載入失敗</td></tr>';
+  });
 }
 
 function esc(t) { var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
