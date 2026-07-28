@@ -374,6 +374,7 @@ function submitAnswer() {
 }
 
 function endGame() {
+  try {
   if (gs.timer) clearInterval(gs.timer);
   var sec = gs.sec, m = Math.floor(sec/60), s = sec%60;
   var row = {
@@ -404,6 +405,7 @@ function endGame() {
   }).catch(function() {});
 
   setTimeout(function() { loadLB(); }, 500);
+  } catch(e) { alert('遊戲結束時發生錯誤: '+e.message); }
 }
 
 function loadLB() {
