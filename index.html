@@ -4,13 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>整數加減法大挑戰 - 名偵探柯南</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
   background: #0a1628;
   min-height: 100vh;
   display: flex;
@@ -30,7 +27,6 @@ body {
   flex-direction: column;
   justify-content: center;
 }
-
 .card {
   background: linear-gradient(135deg, #1a237e, #283593);
   border-radius: 20px;
@@ -44,224 +40,117 @@ body {
 .card::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
   background: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size: 30px 30px;
   pointer-events: none;
 }
 .card-title {
-  font-size: 1.8em;
-  font-weight: 900;
-  text-align: center;
-  margin-bottom: 8px;
-  color: #ffd54f;
+  font-size: 1.8em; font-weight: 900; text-align: center;
+  margin-bottom: 8px; color: #ffd54f;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 .card-subtitle {
-  text-align: center;
-  color: #90caf9;
-  font-size: 0.9em;
-  margin-bottom: 24px;
+  text-align: center; color: #90caf9; font-size: 0.9em; margin-bottom: 24px;
 }
-
 .form-group { margin-bottom: 16px; }
 .form-group label {
-  display: block;
-  color: #ffd54f;
-  font-size: 0.9em;
-  margin-bottom: 4px;
-  font-weight: 700;
+  display: block; color: #ffd54f; font-size: 0.9em;
+  margin-bottom: 4px; font-weight: 700;
 }
 .form-group input {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 10px;
+  width: 100%; padding: 12px 16px; border-radius: 10px;
   border: 2px solid rgba(255,213,79,0.3);
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  font-size: 1em;
-  font-family: inherit;
-  transition: 0.3s;
+  background: rgba(255,255,255,0.1); color: #fff;
+  font-size: 1em; font-family: inherit; transition: 0.3s;
 }
 .form-group input:focus {
-  outline: none;
-  border-color: #ffd54f;
+  outline: none; border-color: #ffd54f;
   background: rgba(255,255,255,0.15);
 }
-
 .btn {
-  display: inline-block;
-  padding: 14px 32px;
-  border-radius: 12px;
-  border: none;
-  font-size: 1.1em;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  transition: 0.3s;
-  text-transform: none;
+  display: inline-block; padding: 14px 32px; border-radius: 12px;
+  border: none; font-size: 1.1em; font-weight: 700;
+  font-family: inherit; cursor: pointer; transition: 0.3s;
 }
 .btn-primary {
   background: linear-gradient(135deg, #c62828, #e53935);
-  color: #fff;
-  width: 100%;
+  color: #fff; width: 100%;
   box-shadow: 0 4px 15px rgba(198,40,40,0.4);
 }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(198,40,40,0.6); }
+.btn-primary:active { transform: translateY(0); }
 .btn-secondary {
-  background: linear-gradient(135deg, #ffd54f, #ffb300);
-  color: #1a237e;
+  background: linear-gradient(135deg, #ffd54f, #ffb300); color: #1a237e;
 }
-.btn-secondary:hover { transform: translateY(-2px); }
-
 .game-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 8px;
 }
-.game-info {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
+.game-info { display: flex; gap: 16px; flex-wrap: wrap; }
 .game-badge {
-  background: rgba(255,213,79,0.2);
-  border: 1px solid #ffd54f;
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 0.85em;
-  color: #ffd54f;
-  font-weight: 700;
+  background: rgba(255,213,79,0.2); border: 1px solid #ffd54f;
+  border-radius: 8px; padding: 6px 14px; font-size: 0.85em;
+  color: #ffd54f; font-weight: 700;
 }
 .level-title {
-  font-size: 1.4em;
-  font-weight: 900;
-  color: #ffd54f;
-  text-align: center;
-  margin-bottom: 4px;
+  font-size: 1.4em; font-weight: 900; color: #ffd54f;
+  text-align: center; margin-bottom: 4px;
 }
 .level-desc {
-  text-align: center;
-  color: #90caf9;
-  font-size: 0.85em;
-  margin-bottom: 20px;
+  text-align: center; color: #90caf9; font-size: 0.85em; margin-bottom: 20px;
 }
-
 .question-box {
-  background: rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 24px;
-  text-align: center;
-  margin-bottom: 20px;
+  background: rgba(255,255,255,0.08); border-radius: 16px;
+  padding: 24px; text-align: center; margin-bottom: 20px;
   border: 1px solid rgba(255,213,79,0.2);
 }
-.question-num {
-  color: #90caf9;
-  font-size: 0.85em;
-  margin-bottom: 8px;
-}
+.question-num { color: #90caf9; font-size: 0.85em; margin-bottom: 8px; }
 .question-text {
-  font-size: 2em;
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
+  font-size: 2em; font-weight: 900; color: #fff;
+  margin-bottom: 20px; letter-spacing: 2px;
 }
 .answer-input {
-  width: 160px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 2px solid #ffd54f;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  font-size: 1.3em;
-  text-align: center;
-  font-family: inherit;
+  width: 160px; padding: 12px 16px; border-radius: 10px;
+  border: 2px solid #ffd54f; background: rgba(255,255,255,0.1);
+  color: #fff; font-size: 1.3em; text-align: center; font-family: inherit;
 }
-.answer-input:focus { outline: none; border-color: #ffd54f; background: rgba(255,255,255,0.15); }
-.feedback {
-  text-align: center;
-  font-weight: 700;
-  min-height: 28px;
-  margin-top: 8px;
-  font-size: 1em;
-}
+.answer-input:focus { outline: none; background: rgba(255,255,255,0.15); }
+.feedback { text-align: center; font-weight: 700; min-height: 28px; margin-top: 8px; font-size: 1em; }
 .feedback.correct { color: #69f0ae; }
 .feedback.wrong { color: #ff8a80; }
-
 .results-score {
-  font-size: 3em;
-  font-weight: 900;
-  text-align: center;
-  color: #ffd54f;
+  font-size: 3em; font-weight: 900; text-align: center; color: #ffd54f;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
 }
-.results-breakdown {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 20px 0;
-}
+.results-breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
 .breakdown-item {
-  background: rgba(255,255,255,0.08);
-  border-radius: 10px;
-  padding: 12px;
-  text-align: center;
-  border: 1px solid rgba(255,213,79,0.2);
+  background: rgba(255,255,255,0.08); border-radius: 10px;
+  padding: 12px; text-align: center; border: 1px solid rgba(255,213,79,0.2);
 }
 .breakdown-item .label { font-size: 0.8em; color: #90caf9; }
 .breakdown-item .value { font-size: 1.4em; font-weight: 900; color: #ffd54f; }
-
 .sel-message {
-  text-align: center;
-  padding: 16px;
-  background: rgba(255,213,79,0.1);
-  border-radius: 12px;
-  margin: 16px 0;
-  border: 1px solid rgba(255,213,79,0.3);
-  font-size: 1.05em;
-  line-height: 1.6;
+  text-align: center; padding: 16px; background: rgba(255,213,79,0.1);
+  border-radius: 12px; margin: 16px 0; border: 1px solid rgba(255,213,79,0.3);
+  font-size: 1.05em; line-height: 1.6;
 }
-
-.leaderboard {
-  margin-top: 20px;
-}
-.leaderboard h3 {
-  text-align: center;
-  color: #ffd54f;
-  margin-bottom: 12px;
-  font-size: 1.2em;
-}
-.leaderboard-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85em;
-}
+.leaderboard { margin-top: 20px; }
+.leaderboard h3 { text-align: center; color: #ffd54f; margin-bottom: 12px; font-size: 1.2em; }
+.leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
 .leaderboard-table th {
-  background: rgba(255,213,79,0.15);
-  padding: 8px;
-  text-align: center;
-  color: #ffd54f;
-  font-size: 0.8em;
+  background: rgba(255,213,79,0.15); padding: 8px;
+  text-align: center; color: #ffd54f; font-size: 0.8em;
 }
 .leaderboard-table td {
-  padding: 8px;
-  text-align: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 8px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);
   color: #fff;
 }
 .leaderboard-table tr:nth-child(1) td { color: #ffd54f; font-weight: 900; }
 .leaderboard-table tr:nth-child(2) td { color: #e0e0e0; font-weight: 700; }
 .leaderboard-table tr:nth-child(3) td { color: #ffab91; font-weight: 700; }
-
 .hidden { display: none !important; }
-
 @media (max-width: 480px) {
   .card { padding: 20px 16px; }
   .card-title { font-size: 1.4em; }
@@ -274,7 +163,6 @@ body {
 <body>
 <div class="container">
 
-  <!-- 註冊畫面 -->
   <div id="screen-register" class="card">
     <div class="card-title">🔍 整數加減法大挑戰</div>
     <div class="card-subtitle">名偵探柯南 · 數學推理篇</div>
@@ -297,7 +185,6 @@ body {
     <button class="btn btn-primary" onclick="startGame()">🕵️ 開始推理挑戰！</button>
   </div>
 
-  <!-- 遊戲畫面 -->
   <div id="screen-game" class="card hidden">
     <div class="game-header">
       <div class="game-info">
@@ -317,7 +204,6 @@ body {
     <button class="btn btn-primary" id="submit-btn" onclick="submitAnswer()">✅ 確認答案</button>
   </div>
 
-  <!-- 結果畫面 -->
   <div id="screen-result" class="card hidden">
     <div class="card-title">🎯 挑戰結束！</div>
     <div id="sel-msg" class="sel-message"></div>
@@ -339,328 +225,210 @@ body {
 </div>
 
 <script>
-// Supabase 設定
-const SUPABASE_URL = 'https://ceqnbiiwjhhbcenxpgdx.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlcW5iaWl3amhoYmNlbnhwZ2R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMTgwMzAsImV4cCI6MjEwMDc5NDAzMH0.opQ5qCPsek9HMgyxawQGawFk4ChIafjjFAy5U2nxZhk';
-let supabase = null;
-try {
-  if (window.supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-} catch(e) {
-  console.warn('Supabase 未載入:', e);
+// === Supabase API (用 fetch 原生呼叫，不需任何 CDN) ===
+const SB_URL = 'https://ceqnbiiwjhhbcenxpgdx.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlcW5iaWl3amhoYmNlbnhwZ2R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMTgwMzAsImV4cCI6MjEwMDc5NDAzMH0.opQ5qCPsek9HMgyxawQGawFk4ChIafjjFAy5U2nxZhk';
+
+function sb(table) {
+  return {
+    async insert(row) {
+      const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+        method: 'POST',
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify(row)
+      });
+      if (!r.ok) console.error('insert error', r.status, await r.text());
+      return r.ok;
+    },
+    async select(cols, opts) {
+      opts = opts || {};
+      let qs = `select=${encodeURIComponent(cols)}`;
+      if (opts.order) qs += `&order=${encodeURIComponent(opts.order)}`;
+      if (opts.limit) qs += `&limit=${opts.limit}`;
+      const r = await fetch(`${SB_URL}/rest/v1/${table}?${qs}`, {
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+      });
+      if (!r.ok) { console.error('select error', r.status); return []; }
+      return await r.json();
+    }
+  };
 }
 
-// EmailJS 設定
-const EMAILJS_PUBLIC_KEY = 'WfsU3lC5UnYQy6B5h';
-const EMAILJS_SERVICE_ID = 'service_ay6bwva';
-const EMAILJS_TEMPLATE_ID = 'template_venpsre';
-let emailjsReady = false;
-
-try {
-  if (typeof emailjs !== 'undefined') {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-    emailjsReady = true;
+// === EmailJS API (用 fetch 原生呼叫) ===
+async function sendEmail(params) {
+  try {
+    const r = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: 'service_ay6bwva',
+        template_id: 'template_venpsre',
+        user_id: 'WfsU3lC5UnYQy6B5h',
+        template_params: params
+      })
+    });
+    return r.ok;
+  } catch(e) {
+    console.error('email error', e);
+    return false;
   }
-} catch(e) {
-  console.warn('EmailJS 未載入:', e);
 }
 
-// 遊戲狀態
-let gameState = {
-  studentClass: '',
-  seatNumber: 0,
-  studentName: '',
-  studentEmail: '',
-  currentLevel: 1,
-  currentQuestion: 1,
-  levelScores: [0, 0, 0, 0],
-  totalScore: 0,
-  startTime: null,
-  currentProblem: null,
-  answering: false,
-  timerInterval: null,
-  elapsedSeconds: 0
+// === 遊戲邏輯 ===
+var gs = {
+  cls: '', seat: 0, name: '', email: '',
+  lv: 1, qn: 1,
+  lvs: [0,0,0,0], total: 0,
+  start: null, prob: null, busy: false,
+  timer: null, sec: 0
 };
 
-const levelNames = ['第一關：同號數相加', '第二關：異號數相加', '第三關：同號數相減', '第四關：異號數相減'];
-const levelDescs = [
+var lvNames = ['第一關：同號數相加','第二關：異號數相加','第三關：同號數相減','第四關：異號數相減'];
+var lvDescs = [
   '兩個數字同號，把它們加起來。例如：(-3) + (-5)',
   '兩個數字異號，把它們加起來。例如：(-3) + 5',
   '兩個數字同號，把後面的減掉。例如：(-3) - (-5)',
   '兩個數字異號，把後面的減掉。例如：(-3) - 5'
 ];
 
-function showScreen(id) {
-  document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
+function $(id) { return document.getElementById(id); }
+function hideAll() { var cs = document.querySelectorAll('.card'); for (var i=0; i<cs.length; i++) cs[i].classList.add('hidden'); }
+function show(id) { hideAll(); $(id).classList.remove('hidden'); }
 
-function formatNum(n) {
-  if (n < 0) return `(${n})`;
-  return String(n);
-}
+function fmt(n) { return n < 0 ? '(' + n + ')' : String(n); }
+function nz(mn, mx) { var n; do { n = Math.floor(Math.random()*(mx-mn+1))+mn; } while (n===0); return n; }
 
-function randomNonZero(min, max) {
-  let n;
-  do { n = Math.floor(Math.random() * (max - min + 1)) + min; } while (n === 0);
-  return n;
-}
-
-function generateProblem(level) {
-  let a = randomNonZero(-20, 20);
-  let b = randomNonZero(-20, 20);
-  switch(level) {
-    case 1:
-      b = Math.sign(a) * Math.abs(b);
-      return { question: `${formatNum(a)} + ${formatNum(b)} = ?`, answer: a + b };
-    case 2:
-      b = -Math.sign(a) * Math.abs(b);
-      return { question: `${formatNum(a)} + ${formatNum(b)} = ?`, answer: a + b };
-    case 3:
-      b = Math.sign(a) * Math.abs(b);
-      return { question: `${formatNum(a)} − ${formatNum(b)} = ?`, answer: a - b };
-    case 4:
-      b = -Math.sign(a) * Math.abs(b);
-      return { question: `${formatNum(a)} − ${formatNum(b)} = ?`, answer: a - b };
+function genProb(lv) {
+  var a = nz(-20,20), b = nz(-20,20);
+  switch(lv) {
+    case 1: b = Math.sign(a) * Math.abs(b); return {q: fmt(a)+' + '+fmt(b)+' = ?', a: a+b};
+    case 2: b = -Math.sign(a) * Math.abs(b); return {q: fmt(a)+' + '+fmt(b)+' = ?', a: a+b};
+    case 3: b = Math.sign(a) * Math.abs(b); return {q: fmt(a)+' − '+fmt(b)+' = ?', a: a-b};
+    case 4: b = -Math.sign(a) * Math.abs(b); return {q: fmt(a)+' − '+fmt(b)+' = ?', a: a-b};
   }
 }
 
-function updateTimer() {
-  gameState.elapsedSeconds++;
-  const m = Math.floor(gameState.elapsedSeconds / 60);
-  const s = gameState.elapsedSeconds % 60;
-  document.getElementById('timer-display').textContent =
-    String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+function updTimer() {
+  gs.sec++;
+  var m = Math.floor(gs.sec/60), s = gs.sec%60;
+  $('timer-display').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 }
 
 function startGame() {
-  const cls = document.getElementById('reg-class').value.trim();
-  const seat = parseInt(document.getElementById('reg-seat').value);
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-
-  if (!cls) { alert('請輸入班級'); return; }
-  if (!seat || seat < 1) { alert('請輸入正確的座號'); return; }
-  if (!name) { alert('請輸入姓名'); return; }
-  if (!email) { alert('請輸入 E-mail'); return; }
-
-  gameState.studentClass = cls;
-  gameState.seatNumber = seat;
-  gameState.studentName = name;
-  gameState.studentEmail = email;
-  gameState.currentLevel = 1;
-  gameState.currentQuestion = 1;
-  gameState.levelScores = [0, 0, 0, 0];
-  gameState.totalScore = 0;
-  gameState.elapsedSeconds = 0;
-  gameState.answering = false;
-
-  document.getElementById('score-display').textContent = '0';
-  document.getElementById('timer-display').textContent = '00:00';
-
-  showScreen('screen-game');
-  gameState.startTime = Date.now();
-  if (gameState.timerInterval) clearInterval(gameState.timerInterval);
-  gameState.timerInterval = setInterval(updateTimer, 1000);
-
-  loadLevel();
+  var a = $('reg-class').value.trim();
+  var b = parseInt($('reg-seat').value);
+  var c = $('reg-name').value.trim();
+  var d = $('reg-email').value.trim();
+  if (!a) { alert('請輸入班級'); return; }
+  if (!b || b<1) { alert('請輸入正確的座號'); return; }
+  if (!c) { alert('請輸入姓名'); return; }
+  if (!d) { alert('請輸入 E-mail'); return; }
+  gs.cls=a; gs.seat=b; gs.name=c; gs.email=d;
+  gs.lv=1; gs.qn=1; gs.lvs=[0,0,0,0]; gs.total=0; gs.sec=0; gs.busy=false;
+  $('score-display').textContent='0';
+  $('timer-display').textContent='00:00';
+  show('screen-game');
+  gs.start=Date.now();
+  if (gs.timer) clearInterval(gs.timer);
+  gs.timer=setInterval(updTimer,1000);
+  loadLv();
 }
 
-function loadLevel() {
-  const lv = gameState.currentLevel;
-  document.getElementById('level-badge').textContent = `第 ${lv} 關`;
-  document.getElementById('level-title').textContent = levelNames[lv - 1];
-  document.getElementById('level-desc').textContent = levelDescs[lv - 1];
-  document.getElementById('question-num').textContent = `第 ${gameState.currentQuestion} / 5 題`;
-  document.getElementById('feedback').textContent = '';
-  document.getElementById('feedback').className = 'feedback';
-  document.getElementById('answer-input').value = '';
-  document.getElementById('answer-input').focus();
-  document.getElementById('submit-btn').disabled = false;
-  gameState.currentProblem = generateProblem(lv);
-  document.getElementById('question-text').textContent = gameState.currentProblem.question;
-  gameState.answering = false;
+function loadLv() {
+  $('level-badge').textContent='第 '+gs.lv+' 關';
+  $('level-title').textContent=lvNames[gs.lv-1];
+  $('level-desc').textContent=lvDescs[gs.lv-1];
+  $('question-num').textContent='第 '+gs.qn+' / 5 題';
+  $('feedback').textContent='';
+  $('feedback').className='feedback';
+  $('answer-input').value='';
+  $('answer-input').focus();
+  $('submit-btn').disabled=false;
+  gs.prob=genProb(gs.lv);
+  $('question-text').textContent=gs.prob.q;
+  gs.busy=false;
 }
 
 function submitAnswer() {
-  if (gameState.answering) return;
-  const input = document.getElementById('answer-input');
-  const userAnswer = parseInt(input.value);
-  if (isNaN(userAnswer)) { alert('請輸入數字答案'); return; }
-
-  gameState.answering = true;
-  document.getElementById('submit-btn').disabled = true;
-
-  const correct = gameState.currentProblem.answer;
-  const fb = document.getElementById('feedback');
-
-  if (userAnswer === correct) {
-    fb.textContent = '✅ 正確！推理成功！';
-    fb.className = 'feedback correct';
-    gameState.levelScores[gameState.currentLevel - 1] += 5;
-    gameState.totalScore += 5;
-    document.getElementById('score-display').textContent = gameState.totalScore;
+  if (gs.busy) return;
+  var ans = parseInt($('answer-input').value);
+  if (isNaN(ans)) { alert('請輸入數字答案'); return; }
+  gs.busy=true;
+  $('submit-btn').disabled=true;
+  var fb = $('feedback');
+  if (ans===gs.prob.a) {
+    fb.textContent='✅ 正確！推理成功！';
+    fb.className='feedback correct';
+    gs.lvs[gs.lv-1]+=5;
+    gs.total+=5;
+    $('score-display').textContent=gs.total;
   } else {
-    fb.textContent = `❌ 不對喔～正確答案是 ${correct}`;
-    fb.className = 'feedback wrong';
+    fb.textContent='❌ 不對喔～正確答案是 '+gs.prob.a;
+    fb.className='feedback wrong';
   }
-
-  setTimeout(() => {
-    gameState.currentQuestion++;
-    if (gameState.currentQuestion > 5) {
-      gameState.currentLevel++;
-      gameState.currentQuestion = 1;
-      if (gameState.currentLevel > 4) {
-        endGame();
-      } else {
-        loadLevel();
-      }
-    } else {
-      loadLevel();
-    }
-  }, 1200);
+  setTimeout(function(){
+    gs.qn++;
+    if (gs.qn>5) { gs.lv++; gs.qn=1;
+      if (gs.lv>4) { endGame(); } else { loadLv(); }
+    } else { loadLv(); }
+  },1200);
 }
 
 async function endGame() {
-  if (gameState.timerInterval) clearInterval(gameState.timerInterval);
-  const totalSeconds = gameState.elapsedSeconds;
-
-  // 存到 Supabase
-  if (supabase) {
-    const { error } = await supabase.from('game_scores').insert({
-      class_name: gameState.studentClass,
-      seat_number: gameState.seatNumber,
-      student_name: gameState.studentName,
-      email: gameState.studentEmail,
-      score: gameState.totalScore,
-      level1_score: gameState.levelScores[0],
-      level2_score: gameState.levelScores[1],
-      level3_score: gameState.levelScores[2],
-      level4_score: gameState.levelScores[3],
-      game_time_seconds: totalSeconds
-    });
-    if (error) {
-      console.error('儲存失敗:', error);
-    }
-  } else {
-    console.warn('Supabase 未連線，成績未儲存');
-  }
-
-  // 顯示結果
-  showScreen('screen-result');
-
-  document.getElementById('total-score').textContent = gameState.totalScore + ' / 100 分';
-
-  const m = Math.floor(totalSeconds / 60);
-  const s = totalSeconds % 60;
-  document.getElementById('total-time').textContent = `${m} 分 ${s} 秒`;
-
-  // 關卡明細
-  const lvLabels = ['同號相加', '異號相加', '同號相減', '異號相減'];
-  let breakdownHTML = '';
-  for (let i = 0; i < 4; i++) {
-    breakdownHTML += `<div class="breakdown-item"><div class="label">${lvLabels[i]}</div><div class="value">${gameState.levelScores[i]} / 25</div></div>`;
-  }
-  document.getElementById('results-breakdown').innerHTML = breakdownHTML;
-
-  // SEL 情緒價值
-  const selMessages = {
-    high: '🏆 太厲害了！你就是整數加減法的小偵探！柯南都要佩服你的推理能力！',
-    good: '💪 很棒喔！你的推理能力正在進步中，繼續保持，成為真正的少年偵探團成員！',
-    mid: '🔍 不錯的開始！柯南也是從菜鳥開始的，多練習幾次，真相只有一個——你會越來越強！',
-    low: '📚 沒關係！每個名偵探都遇過瓶頸，阿笠博士的發明也常失敗。重點是永不放棄，再挑戰一次吧！',
-    poor: '✨ 別灰心！少年偵探團也是慢慢學習的。看看錯題，把「真相」找出來，下次一定更進步！'
+  if (gs.timer) clearInterval(gs.timer);
+  var sec = gs.sec, m = Math.floor(sec/60), s = sec%60;
+  var row = {
+    class_name: gs.cls, seat_number: gs.seat,
+    student_name: gs.name, email: gs.email,
+    score: gs.total, level1_score: gs.lvs[0],
+    level2_score: gs.lvs[1], level3_score: gs.lvs[2],
+    level4_score: gs.lvs[3], game_time_seconds: sec
   };
-  let selMsg;
-  if (gameState.totalScore >= 90) selMsg = selMessages.high;
-  else if (gameState.totalScore >= 70) selMsg = selMessages.good;
-  else if (gameState.totalScore >= 50) selMsg = selMessages.mid;
-  else if (gameState.totalScore >= 30) selMsg = selMessages.low;
-  else selMsg = selMessages.poor;
-  document.getElementById('sel-msg').textContent = selMsg;
+  show('screen-result');
+  $('total-score').textContent=gs.total+' / 100 分';
+  $('total-time').textContent=m+' 分 '+s+' 秒';
+  var lb = ['同號相加','異號相加','同號相減','異號相減'], h='';
+  for (var i=0;i<4;i++) h+='<div class="breakdown-item"><div class="label">'+lb[i]+'</div><div class="value">'+gs.lvs[i]+' / 25</div></div>';
+  $('results-breakdown').innerHTML=h;
+  var sel;
+  if (gs.total>=90) sel='🏆 太厲害了！你就是整數加減法的小偵探！柯南都要佩服你的推理能力！';
+  else if (gs.total>=70) sel='💪 很棒喔！你的推理能力正在進步中，繼續保持，成為真正的少年偵探團成員！';
+  else if (gs.total>=50) sel='🔍 不錯的開始！柯南也是從菜鳥開始的，多練習幾次，真相只有一個——你會越來越強！';
+  else if (gs.total>=30) sel='📚 沒關係！每個名偵探都遇過瓶頸，阿笠博士的發明也常失敗。重點是永不放棄，再挑戰一次吧！';
+  else sel='✨ 別灰心！少年偵探團也是慢慢學習的。看看錯題，把「真相」找出來，下次一定更進步！';
+  $('sel-msg').textContent=sel;
 
-  // 寄送 Email
-  if (emailjsReady) {
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      student_name: gameState.studentName,
-      student_email: gameState.studentEmail,
-      score: gameState.totalScore,
-      level1_score: gameState.levelScores[0],
-      level2_score: gameState.levelScores[1],
-      level3_score: gameState.levelScores[2],
-      level4_score: gameState.levelScores[3],
-      game_time: `${m} 分 ${s} 秒`,
-      total_seconds: totalSeconds
-    }).then(() => {
-      console.log('成績單已寄送');
-    }).catch(err => {
-      console.error('Email 寄送失敗:', err);
-    });
-  }
-
-  // 排行榜
-  loadLeaderboard();
+  sb('game_scores').insert(row);
+  sendEmail({ student_name: gs.name, student_email: gs.email, score: gs.total, level1_score: gs.lvs[0], level2_score: gs.lvs[1], level3_score: gs.lvs[2], level4_score: gs.lvs[3], game_time: m+' 分 '+s+' 秒' });
+  loadLB();
 }
 
-async function loadLeaderboard() {
-  const tbody = document.getElementById('leaderboard-body');
-  if (!supabase) {
-    tbody.innerHTML = '<tr><td colspan="5">排行榜無法載入</td></tr>';
-    return;
+async function loadLB() {
+  var data = await sb('game_scores').select('student_name,class_name,score,game_time_seconds', { order: 'score.desc,game_time_seconds.asc', limit: 20 });
+  var tb = $('leaderboard-body');
+  if (!data.length) { tb.innerHTML='<tr><td colspan="5">還沒有成績紀錄，快來挑戰！</td></tr>'; return; }
+  var h='';
+  for (var i=0;i<data.length;i++) {
+    var r=data[i], mm=Math.floor(r.game_time_seconds/60), ss=r.game_time_seconds%60;
+    var rank = i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);
+    h+='<tr><td>'+rank+'</td><td>'+esc(r.class_name)+'</td><td>'+esc(r.student_name)+'</td><td>'+r.score+'</td><td>'+mm+':'+String(ss).padStart(2,'0')+'</td></tr>';
   }
-  const { data, error } = await supabase
-    .from('game_scores')
-    .select('student_name, class_name, score, game_time_seconds')
-    .order('score', { ascending: false })
-    .order('game_time_seconds', { ascending: true })
-    .limit(20);
-
-  const tbody = document.getElementById('leaderboard-body');
-  if (error || !data) {
-    tbody.innerHTML = '<tr><td colspan="5">排行榜載入失敗</td></tr>';
-    return;
-  }
-  if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5">還沒有成績紀錄，快來挑戰！</td></tr>';
-    return;
-  }
-
-  let html = '';
-  data.forEach((row, i) => {
-    const mm = Math.floor(row.game_time_seconds / 60);
-    const ss = row.game_time_seconds % 60;
-    html += `<tr>
-      <td>${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1)}</td>
-      <td>${escapeHtml(row.class_name)}</td>
-      <td>${escapeHtml(row.student_name)}</td>
-      <td>${row.score}</td>
-      <td>${mm}:${String(ss).padStart(2, '0')}</td>
-    </tr>`;
-  });
-  tbody.innerHTML = html;
+  tb.innerHTML=h;
 }
 
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
+function esc(t) { var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 
 function restartGame() {
-  gameState.currentLevel = 1;
-  gameState.currentQuestion = 1;
-  showScreen('screen-register');
-  document.getElementById('reg-class').value = gameState.studentClass;
-  document.getElementById('reg-seat').value = gameState.seatNumber;
-  document.getElementById('reg-name').value = gameState.studentName;
-  document.getElementById('reg-email').value = gameState.studentEmail;
+  gs.lv=1; gs.qn=1;
+  show('screen-register');
+  $('reg-class').value=gs.cls;
+  $('reg-seat').value=gs.seat;
+  $('reg-name').value=gs.name;
+  $('reg-email').value=gs.email;
 }
 
-// 鍵盤 Enter 送出答案
-document.getElementById('answer-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') submitAnswer();
-});
+$('answer-input').addEventListener('keydown',function(e){ if (e.key==='Enter') submitAnswer(); });
 </script>
+
 </body>
 </html>
