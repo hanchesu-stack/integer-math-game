@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>整數加減法大挑戰 - 名偵探柯南</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -342,20 +342,29 @@ body {
 // Supabase 設定
 const SUPABASE_URL = 'https://ceqnbiiwjhhbcenxpgdx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlcW5iaWl3amhoYmNlbnhwZ2R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMTgwMzAsImV4cCI6MjEwMDc5NDAzMH0.opQ5qCPsek9HMgyxawQGawFk4ChIafjjFAy5U2nxZhk';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let supabase = null;
+try {
+  if (window.supabase) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+} catch(e) {
+  console.warn('Supabase 未載入:', e);
+}
 
-// EmailJS 設定（填入你的 EmailJS 資訊）
+// EmailJS 設定
 const EMAILJS_PUBLIC_KEY = 'WfsU3lC5UnYQy6B5h';
 const EMAILJS_SERVICE_ID = 'service_ay6bwva';
 const EMAILJS_TEMPLATE_ID = 'template_venpsre';
 let emailjsReady = false;
 
-(function initEmailJS() {
-  if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+try {
+  if (typeof emailjs !== 'undefined') {
     emailjs.init(EMAILJS_PUBLIC_KEY);
     emailjsReady = true;
   }
-})();
+} catch(e) {
+  console.warn('EmailJS 未載入:', e);
+}
 
 // 遊戲狀態
 let gameState = {
@@ -518,22 +527,24 @@ async function endGame() {
   const totalSeconds = gameState.elapsedSeconds;
 
   // 存到 Supabase
-  const { error } = await supabase.from('game_scores').insert({
-    class_name: gameState.studentClass,
-    seat_number: gameState.seatNumber,
-    student_name: gameState.studentName,
-    email: gameState.studentEmail,
-    score: gameState.totalScore,
-    level1_score: gameState.levelScores[0],
-    level2_score: gameState.levelScores[1],
-    level3_score: gameState.levelScores[2],
-    level4_score: gameState.levelScores[3],
-    game_time_seconds: totalSeconds
-  });
-
-  if (error) {
-    console.error('儲存失敗:', error);
-    alert('成績儲存失敗，請檢查網路連線');
+  if (supabase) {
+    const { error } = await supabase.from('game_scores').insert({
+      class_name: gameState.studentClass,
+      seat_number: gameState.seatNumber,
+      student_name: gameState.studentName,
+      email: gameState.studentEmail,
+      score: gameState.totalScore,
+      level1_score: gameState.levelScores[0],
+      level2_score: gameState.levelScores[1],
+      level3_score: gameState.levelScores[2],
+      level4_score: gameState.levelScores[3],
+      game_time_seconds: totalSeconds
+    });
+    if (error) {
+      console.error('儲存失敗:', error);
+    }
+  } else {
+    console.warn('Supabase 未連線，成績未儲存');
   }
 
   // 顯示結果
@@ -593,6 +604,11 @@ async function endGame() {
 }
 
 async function loadLeaderboard() {
+  const tbody = document.getElementById('leaderboard-body');
+  if (!supabase) {
+    tbody.innerHTML = '<tr><td colspan="5">排行榜無法載入</td></tr>';
+    return;
+  }
   const { data, error } = await supabase
     .from('game_scores')
     .select('student_name, class_name, score, game_time_seconds')
